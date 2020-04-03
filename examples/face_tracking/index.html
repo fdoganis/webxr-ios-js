@@ -352,11 +352,11 @@
 				//_download("face.txt", result);
             }	
 
+            _copyToClipboard(result);
+
             let floatingDiv = document.getElementById('floatingDiv');
             floatingDiv.style.display = 'block';                      
             floatingDiv.innerHTML = result.split( '\n' ).join( '<br />' );
-
-            _copyToClipboard(result);
             
             // TEST
             //floatingDiv.innerHTML = "testfsdfsdfdsfdsfdsfdsfsdfs";
