@@ -40,8 +40,6 @@
     	<p>This detects and tracks your face using ARKit and places a 3D  model on it.
         (Glasses model by <a href="https://sketchfab.com/models/5c78f100eea749c895d69fe2ed728197#">person-x</a>)</p>
     </div>
-    <div id="floating" class="floating">
-    </div>
     <button type=button id=go-button>Go</button>
     <button type=button id=download-model-button>Download</button>
     <script type=module>
@@ -58,8 +56,15 @@
         
         var meshMap = new Map()
 
+// Download
         var meshToDownload = null;
         
+        // OBJ DUMP DEBUG
+        var floatingDiv = document.createElement( 'div' );
+        floatingDiv.className = 'floating';
+        document.body.appendChild(floatingDiv);
+				
+
         // temporary working variables
         const workingMatrix = mat4.create()
         const workingVec3 = vec3.create()
@@ -282,7 +287,8 @@
 
             var tm = new THREE.Mesh(geometry, material)
             
-            meshToDownload = new THREE.Mesh(geometry, material)
+
+            meshToDownload = new THREE.Mesh(geometry, material); // Download
             
             tm.renderOrder = -2
             transparentMesh.add(tm)
@@ -308,7 +314,6 @@
         }
 
         // Download
-
         document.getElementById('download-model-button').addEventListener('click', downloadModel, true)
 
         function downloadModel() {
@@ -316,14 +321,23 @@
 		}
 		
 		function _exportToObj() {
+
+            var result = null;
+            if(meshToDownload) {
 				var exporter = new THREE.OBJExporter();
-				var result = exporter.parse( meshToDownload );
-				//this._download("face.txt", "test");
+				result = exporter.parse( meshToDownload );
+
 				_download("face.obj", result);
-				
-				floatingDiv.style.display = 'block';
-				floatingDiv.innerHTML = result.split( '\n' ).join( '<br />' );
-		}
+
+            } else {
+                result = "test\\ntest2\\n";
+				_download("face.txt", result);
+            }	
+
+            floatingDiv.style.display = 'block';
+            floatingDiv.innerHTML = result.split( '\n' ).join( '<br />' );
+		
+        }
 
 		function _download(filename, text) {
 		  let element = document.createElement('a');
