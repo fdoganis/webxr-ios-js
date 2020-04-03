@@ -8,7 +8,8 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="stylesheet" href="../common.css"/>
 	<script src="../libs/three/three.js"></script>
-	<script src="../libs/three/loaders/GLTFLoader.js"></script>
+    <script src="../libs/three/loaders/GLTFLoader.js"></script>
+    <script src="../libs/three/OBJExporter.js"></script>
     <script src="../libs/dat.gui.min.js"></script>
     <script module src="../../dist/webxr.js"></script>
     <style>
@@ -25,7 +26,10 @@
     	<p>This detects and tracks your face using ARKit and places a 3D  model on it.
         (Glasses model by <a href="https://sketchfab.com/models/5c78f100eea749c895d69fe2ed728197#">person-x</a>)</p>
     </div>
+    <div id="floating">
+    </div>
     <button type=button id=go-button>Go</button>
+    <button type=button id=download-model-button>Download</button>
     <script type=module>
         // some dependencies and utilities
         import * as mat4 from '../libs/gl-matrix/mat4.js'
@@ -39,6 +43,8 @@
         let engine = null
         
         var meshMap = new Map()
+
+        var meshToDownload = null;
         
         // temporary working variables
         const workingMatrix = mat4.create()
@@ -49,7 +55,6 @@
         
         var ambientLight = null
         var directionalLight = null
-
 
         // add dat.GUI to the left HUD.  We hid it in stereo viewing, so we don't need to 
         // figure out how to duplicate it.
@@ -65,7 +70,7 @@
         gui.add( params, 'ducky' );
         gui.add( params, 'glasses' );
         gui.domElement.id = 'gui';
-        gui.open();
+        gui.close();
 
         var duckyCreated = false
         var glassesCreated = false;
@@ -262,6 +267,9 @@
             let transparentMesh = new THREE.Group()
 
             var tm = new THREE.Mesh(geometry, material)
+            
+            meshToDownload = new THREE.Mesh(geometry, material)
+            
             tm.renderOrder = -2
             transparentMesh.add(tm)
 
@@ -284,6 +292,38 @@
                 threeMesh: transparentMesh
             })
         }
+
+        // Download
+
+        document.getElementById('download-model-button').addEventListener('click', downloadModel, true)
+
+        function downloadModel() {
+		    _exportToObj();
+		}
+		
+		function _exportToObj() {
+				var exporter = new THREE.OBJExporter();
+				var result = exporter.parse( meshToDownload );
+				//this._download("face.txt", "test");
+				_download("face.obj", result);
+				
+				floatingDiv.style.display = 'block';
+				floatingDiv.innerHTML = result.split( '\n' ).join( '<br />' );
+		}
+
+		function _download(filename, text) {
+		  let element = document.createElement('a');
+		  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		  element.setAttribute('download', filename);
+
+		  element.style.display = 'none';
+		  document.body.appendChild(element);
+
+		  element.click();
+
+		  document.body.removeChild(element);
+		}
+
     
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
@@ -336,6 +376,7 @@
                     })
                 document.getElementById('go-button').innerText = "End"
                 document.getElementById('go-button').style.display = 'none' 
+                document.getElementById('description').style.display = 'none' 
                 document.body.appendChild(gui.domElement);
 
             } else {
