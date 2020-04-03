@@ -38,7 +38,7 @@
     <!-- <script module src="../../dist/webxr.js"></script> -->
 </head>
 <body>
-    <div id="floatingDiv" class="floating">   
+    <div id="floatingDiv" class="floating">  
     </div>
     <div id="description">
         <h2>ARKit face tracking Example</h2>
@@ -355,7 +355,8 @@
             let floatingDiv = document.getElementById('floatingDiv');
             floatingDiv.style.display = 'block';                      
             floatingDiv.innerHTML = result.split( '\n' ).join( '<br />' );
-            _selectText(floatingDiv);
+
+            _copyToClipboard(result);
             
             // TEST
             //floatingDiv.innerHTML = "testfsdfsdfdsfdsfdsfdsfsdfs";
@@ -375,13 +376,52 @@
 		  document.body.removeChild(element);
 		}
 
+       //  https://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios
+        /**
+        * Copy a string to clipboard
+        * @param  {String} string         The string to be copied to clipboard
+        * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
+        */
+        function _copyToClipboard(string) {
+            let textarea;
+            let result;
+
+            try {
+                textarea = document.createElement('textarea');
+                textarea.setAttribute('readonly', true);
+                textarea.setAttribute('contenteditable', true);
+                textarea.style.position = 'fixed'; // prevent scroll from jumping to the bottom when focus is set.
+                textarea.value = string;
+
+                document.body.appendChild(textarea);
+
+                //textarea.focus(); // 'fixed' above does not seem to work as expected, hence removing 'focus'
+                textarea.select();
+
+                const range = document.createRange();
+                range.selectNodeContents(textarea);
+
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+
+                textarea.setSelectionRange(0, textarea.value.length);
+                result = document.execCommand('copy');
+            } catch (err) {
+                console.error(err);
+                result = null;
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
         function _selectText(element) {
             let text = element;
             if (window.getSelection) {
 
                 // save current contentEditable/readOnly status
-                let editable = text.contentEditable;
-                let readOnly = text.readOnly;
+                let oldEditable = text.contentEditable;
+                let oldReadOnly = text.readOnly;
 
                 // convert to editable with readonly to stop iOS keyboard opening
                 text.contentEditable = true;
@@ -393,9 +433,13 @@
                 selection.removeAllRanges();
                 selection.addRange(range);
 
+                text.setSelectionRange(0, 999999999999); // A big number, to cover anything that could be inside the element.
+                document.execCommand('copy');
+
                 // restore contentEditable/readOnly to original state
-                text.contentEditable = editable;
-                text.readOnly = readOnly;
+                text.contentEditable = oldEditable;
+                text.readOnly = oldReadOnly;
+
             }
         }
     
