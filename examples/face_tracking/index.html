@@ -328,10 +328,12 @@
 				result = exporter.parse( meshToDownload );
 
 				_download("face.obj", result);
+                window.open('mailto:test@example.com?subject=subject&body='+result);
 
             } else {
                 result = "test\\ntest2\\n";
 				_download("face.txt", result);
+                window.open('mailto:test@example.com?subject=subject&body='+result);
             }	
 
             floatingDiv.style.display = 'block';
