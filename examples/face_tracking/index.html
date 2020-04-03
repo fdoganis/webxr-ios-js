@@ -16,8 +16,10 @@
         .dg { 
             margin-top:30px !important;
             }
+
+    
         .floating {
-            background : #000000;
+            background : #fff;
             opacity : 0.8;
             width : 80%;
             height : 80%;
@@ -30,10 +32,14 @@
             overflow : auto;
             z-index: 100;
         }
+        
+
     </style>
     <!-- <script module src="../../dist/webxr.js"></script> -->
 </head>
 <body>
+    <div id="floatingDiv" class="floating">   
+    </div>
     <div id="description">
         <h2>ARKit face tracking Example</h2>
     	<h5>(click to dismiss)</h5>
@@ -41,6 +47,8 @@
         (Glasses model by <a href="https://sketchfab.com/models/5c78f100eea749c895d69fe2ed728197#">person-x</a>)</p>
     </div>
     <button type=button id=go-button>Go</button>
+    <br>
+    <br>
     <button type=button id=download-model-button>Download</button>
     <script type=module>
         // some dependencies and utilities
@@ -56,13 +64,15 @@
         
         var meshMap = new Map()
 
-// Download
+        // Download
         var meshToDownload = null;
         
         // OBJ DUMP DEBUG
-        var floatingDiv = document.createElement( 'div' );
-        floatingDiv.className = 'floating';
-        document.body.appendChild(floatingDiv);
+        // var floatingDiv = document.createElement( 'div' );
+        // floatingDiv.className = 'floating';
+        // floatingDiv.style.display = 'block';
+        // document.body.appendChild(floatingDiv);
+        // floatingDiv.innerHTML = 'test';
 				
 
         // temporary working variables
@@ -327,17 +337,28 @@
 				var exporter = new THREE.OBJExporter();
 				result = exporter.parse( meshToDownload );
 
-				_download("face.obj", result);
-                window.open('mailto:test@example.com?subject=subject&body='+result);
+				//_download("face.obj", result);
+
 
             } else {
-                result = "test\\ntest2\\n";
-				_download("face.txt", result);
-                window.open('mailto:test@example.com?subject=subject&body='+result);
+                result =   `o
+                            v -50 -50 0
+                            v 50 -50 0
+                            v 50 50 0
+                            vn 0 0 1
+                            vn 0 0 1
+                            vn 0 0 1
+                            f 1//1 2//2 3//3`;
+				//_download("face.txt", result);
             }	
 
-            floatingDiv.style.display = 'block';
+            let floatingDiv = document.getElementById('floatingDiv');
+            floatingDiv.style.display = 'block';                      
             floatingDiv.innerHTML = result.split( '\n' ).join( '<br />' );
+            _selectText(floatingDiv);
+            
+            // TEST
+            //floatingDiv.innerHTML = "testfsdfsdfdsfdsfdsfdsfsdfs";
 		
         }
 
@@ -354,6 +375,17 @@
 		  document.body.removeChild(element);
 		}
 
+        function _selectText(element) {
+            let text = element;
+            if (window.getSelection) {
+                let selection = window.getSelection();        
+                let range = document.createRange();
+                range.selectNodeContents(text);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    
     
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
