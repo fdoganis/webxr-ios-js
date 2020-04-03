@@ -378,11 +378,24 @@
         function _selectText(element) {
             let text = element;
             if (window.getSelection) {
+
+                // save current contentEditable/readOnly status
+                let editable = text.contentEditable;
+                let readOnly = text.readOnly;
+
+                // convert to editable with readonly to stop iOS keyboard opening
+                text.contentEditable = true;
+                text.readOnly = true;
+
                 let selection = window.getSelection();        
                 let range = document.createRange();
                 range.selectNodeContents(text);
                 selection.removeAllRanges();
                 selection.addRange(range);
+
+                // restore contentEditable/readOnly to original state
+                text.contentEditable = editable;
+                text.readOnly = readOnly;
             }
         }
     
