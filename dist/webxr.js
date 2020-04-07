@@ -2398,7 +2398,7 @@ class ARKitWrapper extends EventTarget {
 		}
 		this._defaultOptions = {
 			location: true,
-			camera: false,
+			camera: true,
 			objects: true,
 			light_intensity: true,
 			computer_vision_data: false
