@@ -384,14 +384,9 @@
 			};
 
             // Copy Mesh to Clipboard
-            //document.getElementById('copy-model-button').addEventListener('click', copyModel, true)
-            window.addEventListener('mouseup', copyModel);
+            window.addEventListener('mouseup', e => {_convertToObjAndCopy});
 
-            function copyModel() {
-                _convertToObjAndCopy();
-            }
-
-            function _convertToObjAndCopy() {
+            const _convertToObjAndCopy = () => {
 
                 let result = null;
 
@@ -403,8 +398,6 @@
                 let floatingDiv = document.getElementById('floatingDiv');
                 floatingDiv.style.display = 'block';
                 floatingDiv.innerHTML = result.split('\n').join('<br />');
-
-
             }
 
    
@@ -415,7 +408,7 @@
             * @param  {String} string         The string to be copied to clipboard
             * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
             */
-            function _copyToClipboard(string) {
+            const _copyToClipboard = (string) => {
                 let textarea;
                 let result;
 
