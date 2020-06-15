@@ -1,9 +1,7 @@
 <html>
 	<!-- Any copyright is dedicated to the Public Domain.
 		http://creativecommons.org/publicdomain/zero/1.0/
-    -->
-    
-            <!--  debugConsole inspired by https://threejsfundamentals.org/threejs/lessons/threejs-debugging-javascript.html -->
+	-->
 	<head>
 		<title>ARKit face tracking example</title>
 		<meta charset="utf-8">
@@ -32,17 +30,6 @@
             z-index: 100;
         }
 
-    #debug {
-      position: absolute;
-      left: 1em;
-      top: 1em;
-      padding: 1em;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      font-family: monospace;
-    }
-
-
 		</style>
 	</head>
 	<body>
@@ -68,32 +55,6 @@
 			let engine = null;
 
 			const meshMap = new Map();
-
-            // Debug
-            class ClearingLogger {
-                constructor(elem) {
-                    this.elem = elem;
-                    this.lines = [];
-                }
-                log(...args) {
-                    this.lines.push([...args].join(' '));
-                }
-                render() {
-                    this.elem.textContent = this.lines.join('\n');
-                    this.lines = [];
-                }
-            }
-
-            
-// Debug
-const logger = new ClearingLogger(document.querySelector('#debug pre'));
-
-console.log = logger.log;
-console.debug = logger.log;
-console.warn = logger.log;
-console.info = logger.log;
-console.error = logger.log;
- 
 
             // Clipboard
             let meshToCopy = null;
@@ -254,7 +215,7 @@ console.error = logger.log;
 
 			const onSelect = event => {
 				isSelecting = true;
-                console.log('onSelect');
+                window.alert('onSelect');
 			};
 
 			// Called once per frame, before render, to give the app a chance to update this.scene
@@ -439,16 +400,19 @@ console.error = logger.log;
                 floatingDiv.innerHTML = 'mouseup';
             });
 */
-            const _convertToObjAndCopy = meshToCopy => {
+            const _convertToObjAndCopy = async meshToCopy => {
 
-                console.log('_convertToObjAndCopy mesh');
                 let result = null;
 
                 if (!meshToCopy) {
                     result = 'NO MESH';
                 } else {
                     const exporter = new THREE.OBJExporter();
+                    if(!exporter) window.alert('exporter is NULL');
+                    
                     result = exporter.parse(meshToCopy);
+
+
                 }
 
                 _copyToClipboard(result);
@@ -457,9 +421,7 @@ console.error = logger.log;
                 floatingDiv.style.display = 'block';
                 floatingDiv.innerHTML = result.split('\n').join('<br />');
 
-                console.log('Mesh copied in Clipboard!');
                 window.alert('Mesh copied in Clipboard!');
-
             }
 
    
@@ -470,7 +432,7 @@ console.error = logger.log;
             * @param  {String} string         The string to be copied to clipboard
             * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
             */
-            const _copyToClipboard = string => {
+            const _copyToClipboard = async string => {
                 let textarea;
                 let result;
 
@@ -498,24 +460,17 @@ console.error = logger.log;
                 } catch (err) {
                     console.error(err);
                     result = null;
-                    console.error('_copyToClipboard FAILED');
+                    window.alert('_copyToClipboard FAILED');
                 } finally {
                     document.body.removeChild(textarea);
                 }
             }
 
-let then = 0;
 
 			////////////////
 			// render loop
 			const handleAnimationFrame = (t, frame) => {
 				if (!session || session.ended) return;
-
-                t *= 0.001;  // convert to seconds
-  const deltaTime = t - then;
-  then = t;
-
-  logger.log('fps:', (1 / deltaTime).toFixed(1));
 
 				updateScene(frame);
 				session.requestAnimationFrame(handleAnimationFrame);
@@ -526,7 +481,7 @@ let then = 0;
 					return;
 				}
 
-                if (isSelecting) {
+                if (isSelecting && meshToCopy) {
 
                     _convertToObjAndCopy(meshToCopy);
 
@@ -540,12 +495,9 @@ let then = 0;
 						view.projectionMatrix,
 						view.transform.matrix
 					);
-					engine.render()
+					engine.render();
 				}
 				engine.endFrame();
-
-                // Debug
-                logger.render();
 			};
 
 			initXR();
