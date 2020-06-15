@@ -400,8 +400,9 @@
                 floatingDiv.innerHTML = 'mouseup';
             });
 */
-            const _convertToObjAndCopy = async meshToCopy => {
+            const _convertToObjAndCopy = meshToCopy => {
 
+                window.alert('_convertToObjAndCopy mesh');
                 let result = null;
 
                 if (!meshToCopy) {
@@ -409,8 +410,6 @@
                 } else {
                     const exporter = new THREE.OBJExporter();
                     result = exporter.parse(meshToCopy);
-
-                    window.alert('_convertToObjAndCopy mesh: ' + meshToCopy);
                 }
 
                 _copyToClipboard(result);
@@ -419,7 +418,7 @@
                 floatingDiv.style.display = 'block';
                 floatingDiv.innerHTML = result.split('\n').join('<br />');
 
-                window.alsert('Mesh copied in Clipboard!');
+                window.alert('Mesh copied in Clipboard!');
             }
 
    
@@ -430,7 +429,7 @@
             * @param  {String} string         The string to be copied to clipboard
             * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
             */
-            const _copyToClipboard = async string => {
+            const _copyToClipboard = string => {
                 let textarea;
                 let result;
 
