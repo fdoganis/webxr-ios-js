@@ -400,12 +400,16 @@
             });
 */
             const _convertToObjAndCopy = () => {
-                if(!meshToCopy) return;
+
 
                 let result = null;
 
-                const exporter = new THREE.OBJExporter();
-                result = exporter.parse(meshToCopy);
+                if (!meshToCopy) {
+                    result = 'NO MESH';
+                } else {
+                    const exporter = new THREE.OBJExporter();
+                    result = exporter.parse(meshToCopy);
+                }
 
                 _copyToClipboard(result);
 
