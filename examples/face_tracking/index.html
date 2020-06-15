@@ -409,6 +409,8 @@
                 } else {
                     const exporter = new THREE.OBJExporter();
                     result = exporter.parse(meshToCopy);
+
+                    window.alert('_convertToObjAndCopy mesh: ' + meshToCopy);
                 }
 
                 _copyToClipboard(result);
@@ -456,6 +458,7 @@
                 } catch (err) {
                     console.error(err);
                     result = null;
+                    window.alert('_copyToClipboard FAILED');
                 } finally {
                     document.body.removeChild(textarea);
                 }
