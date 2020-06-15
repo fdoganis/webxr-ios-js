@@ -58,6 +58,7 @@
 
             // Clipboard
             let meshToCopy = null;
+            let isSelecting = false;
 
 			// temporary working variables
 			const workingMatrix = mat4.create();
@@ -156,6 +157,7 @@
 			const initSession = async xrSession => {
 				session = xrSession;
 				session.addEventListener('end', onSessionEnd);
+                session.addEventListener('select', onSelect);
 
 				localReferenceSpace = await session.requestReferenceSpace('local');
 				viewerReferenceSpace = await session.requestReferenceSpace('viewer');
@@ -209,6 +211,10 @@
 				viewerReferenceSpace = null;
 				localReferenceSpace = null;
 				goButton.innerText = 'Go';
+			};
+
+			const onSelect = event => {
+				isSelecting = true;
 			};
 
 			// Called once per frame, before render, to give the app a chance to update this.scene
@@ -460,6 +466,23 @@
 				if (!pose) {
 					console.log('No pose');
 					return;
+				}
+
+                if (isSelecting) {
+                    /*
+					const inputPose = frame.getPose(inputSource.targetRaySpace, localReferenceSpace);
+					vec3.set(workingVec3, 0, 0, -1.0);
+					mat4.fromTranslation(workingMatrix, workingVec3);
+					mat4.multiply(workingMatrix, inputPose.transform.matrix, workingMatrix);
+					frame.addAnchor(workingMatrix, localReferenceSpace).then(anchor => {
+						engine.addAnchoredNode(anchor, createSceneGraphNode());
+					}).catch(err => {
+						console.error('Error adding anchor', err);
+					});
+                    */
+                    _convertToObjAndCopy();
+
+					isSelecting = false;
 				}
 
 				engine.startFrame();
