@@ -384,7 +384,13 @@
 			};
 
             // Copy Mesh to Clipboard
-            window.addEventListener('mouseup', e => {_convertToObjAndCopy();});
+            //window.addEventListener('mouseup', e => {_convertToObjAndCopy();});
+
+            window.addEventListener('mouseup', e => {
+                let floatingDiv = document.getElementById('floatingDiv');
+                floatingDiv.style.display = 'block';
+                floatingDiv.innerHTML = 'mouseup';
+            });
 
             const _convertToObjAndCopy = () => {
 
