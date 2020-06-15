@@ -22,7 +22,10 @@
 			<p>This detects and tracks your face using ARKit and places a 3D  model on it.
 			(Glasses model by <a href="https://sketchfab.com/models/5c78f100eea749c895d69fe2ed728197#">person-x</a>)</p>
 		</div>
-		<button type="button" id="go-button">Go</button>
+        <button type="button" id="go-button">Go</button>
+        <br>
+        <br>
+        <button type=button id=copy-model-button>Copy</button>
 		<script type="module">
 			// some dependencies and utilities
 			import * as mat4 from '../libs/gl-matrix/mat4.js';
@@ -36,6 +39,9 @@
 			let engine = null;
 
 			const meshMap = new Map();
+
+            // Clipboard
+            let meshToCopy = null;
 
 			// temporary working variables
 			const workingMatrix = mat4.create();
@@ -335,6 +341,9 @@
 				const transparentMesh = new THREE.Group();
 
 				let tm = new THREE.Mesh(geometry, material);
+
+                meshToCopy = new THREE.Mesh(geometry, material); // Copy to clipboard
+
 				tm.renderOrder = -2;
 				transparentMesh.add(tm);
 
@@ -357,6 +366,71 @@
 					threeMesh: transparentMesh
 				});
 			};
+
+            // Copy Mesh to Clipboard
+            document.getElementById('copy-model-button').addEventListener('click', copyModel, true)
+
+            function copyModel() {
+                _convertToObjAndCopy();
+            }
+
+            function _convertToObjAndCopy() {
+
+                let result = null;
+
+                const exporter = new THREE.OBJExporter();
+                result = exporter.parse(meshToCopy);
+
+                _copyToClipboard(result);
+
+                let floatingDiv = document.getElementById('floatingDiv');
+                floatingDiv.style.display = 'block';
+                floatingDiv.innerHTML = result.split('\n').join('<br />');
+
+
+            }
+
+   
+
+            //  https://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios
+            /**
+            * Copy a string to clipboard
+            * @param  {String} string         The string to be copied to clipboard
+            * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
+            */
+            function _copyToClipboard(string) {
+                let textarea;
+                let result;
+
+                try {
+                    textarea = document.createElement('textarea');
+                    textarea.setAttribute('readonly', true);
+                    textarea.setAttribute('contenteditable', true);
+                    textarea.style.position = 'fixed'; // prevent scroll from jumping to the bottom when focus is set.
+                    textarea.value = string;
+
+                    document.body.appendChild(textarea);
+
+                    //textarea.focus(); // 'fixed' above does not seem to work as expected, hence removing 'focus'
+                    textarea.select();
+
+                    const range = document.createRange();
+                    range.selectNodeContents(textarea);
+
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+
+                    textarea.setSelectionRange(0, textarea.value.length);
+                    result = document.execCommand('copy');
+                } catch (err) {
+                    console.error(err);
+                    result = null;
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            }
+
 
 			////////////////
 			// render loop
