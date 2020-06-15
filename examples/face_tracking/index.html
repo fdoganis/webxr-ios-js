@@ -14,9 +14,27 @@
 			.dg { 
 				margin-top:30px !important;
 			}
+
+            .floating {
+            background : #fff;
+            opacity : 0.8;
+            width : 80%;
+            height : 80%;
+            position : absolute;
+            left : 10%;
+            top : 10%;
+            border : 1px solid #555555;
+            padding : 10px;
+            display : none;
+            overflow : auto;
+            z-index: 100;
+        }
+
 		</style>
 	</head>
 	<body>
+        <div id="floatingDiv" class="floating">  
+        </div>
 		<div id="description">
 			<h2>ARKit face tracking Example</h2>
 			<p>This detects and tracks your face using ARKit and places a 3D  model on it.
@@ -53,9 +71,9 @@
 			// add dat.GUI to the left HUD.  We hid it in stereo viewing, so we don't need to
 			// figure out how to duplicate it.
 			const params = {
-				face: 'occlusion',
+				face: 'both',
 				ducky: false,
-				glasses: true
+				glasses: false
 			};
 
 			const gui = new dat.GUI({autoPlace: false});
