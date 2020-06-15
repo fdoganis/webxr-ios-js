@@ -1,7 +1,9 @@
 <html>
 	<!-- Any copyright is dedicated to the Public Domain.
 		http://creativecommons.org/publicdomain/zero/1.0/
-	-->
+    -->
+    
+            <!--  debugConsole inspired by https://threejsfundamentals.org/threejs/lessons/threejs-debugging-javascript.html -->
 	<head>
 		<title>ARKit face tracking example</title>
 		<meta charset="utf-8">
@@ -30,6 +32,17 @@
             z-index: 100;
         }
 
+    #debug {
+      position: absolute;
+      left: 1em;
+      top: 1em;
+      padding: 1em;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-family: monospace;
+    }
+
+
 		</style>
 	</head>
 	<body>
@@ -55,6 +68,32 @@
 			let engine = null;
 
 			const meshMap = new Map();
+
+            // Debug
+            class ClearingLogger {
+                constructor(elem) {
+                    this.elem = elem;
+                    this.lines = [];
+                }
+                log(...args) {
+                    this.lines.push([...args].join(' '));
+                }
+                render() {
+                    this.elem.textContent = this.lines.join('\n');
+                    this.lines = [];
+                }
+            }
+
+            
+// Debug
+const logger = new ClearingLogger(document.querySelector('#debug pre'));
+
+console.log = logger.log;
+console.debug = logger.log;
+console.warn = logger.log;
+console.info = logger.log;
+console.error = logger.log;
+ 
 
             // Clipboard
             let meshToCopy = null;
@@ -463,11 +502,18 @@
                 }
             }
 
+let then = 0;
 
 			////////////////
 			// render loop
 			const handleAnimationFrame = (t, frame) => {
 				if (!session || session.ended) return;
+
+                t *= 0.001;  // convert to seconds
+  const deltaTime = t - then;
+  then = t;
+
+  logger.log('fps:', (1 / deltaTime).toFixed(1));
 
 				updateScene(frame);
 				session.requestAnimationFrame(handleAnimationFrame);
@@ -479,17 +525,7 @@
 				}
 
                 if (isSelecting) {
-                    /*
-					const inputPose = frame.getPose(inputSource.targetRaySpace, localReferenceSpace);
-					vec3.set(workingVec3, 0, 0, -1.0);
-					mat4.fromTranslation(workingMatrix, workingVec3);
-					mat4.multiply(workingMatrix, inputPose.transform.matrix, workingMatrix);
-					frame.addAnchor(workingMatrix, localReferenceSpace).then(anchor => {
-						engine.addAnchoredNode(anchor, createSceneGraphNode());
-					}).catch(err => {
-						console.error('Error adding anchor', err);
-					});
-                    */
+
                     _convertToObjAndCopy(meshToCopy);
 
 					isSelecting = false;
@@ -502,9 +538,12 @@
 						view.projectionMatrix,
 						view.transform.matrix
 					);
-					engine.render();
+					engine.render()
 				}
 				engine.endFrame();
+
+                // Debug
+                logger.render();
 			};
 
 			initXR();
