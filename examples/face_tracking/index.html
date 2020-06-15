@@ -254,7 +254,7 @@ console.error = logger.log;
 
 			const onSelect = event => {
 				isSelecting = true;
-                window.alert('onSelect');
+                console.log('onSelect');
 			};
 
 			// Called once per frame, before render, to give the app a chance to update this.scene
@@ -441,7 +441,7 @@ console.error = logger.log;
 */
             const _convertToObjAndCopy = meshToCopy => {
 
-                window.alert('_convertToObjAndCopy mesh');
+                console.log('_convertToObjAndCopy mesh');
                 let result = null;
 
                 if (!meshToCopy) {
@@ -457,7 +457,9 @@ console.error = logger.log;
                 floatingDiv.style.display = 'block';
                 floatingDiv.innerHTML = result.split('\n').join('<br />');
 
+                console.log('Mesh copied in Clipboard!');
                 window.alert('Mesh copied in Clipboard!');
+
             }
 
    
@@ -496,7 +498,7 @@ console.error = logger.log;
                 } catch (err) {
                     console.error(err);
                     result = null;
-                    window.alert('_copyToClipboard FAILED');
+                    console.error('_copyToClipboard FAILED');
                 } finally {
                     document.body.removeChild(textarea);
                 }
