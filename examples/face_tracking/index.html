@@ -41,7 +41,8 @@
                 Touch screen to copy mesh to clipboard.
 			(Glasses model by <a href="https://sketchfab.com/models/5c78f100eea749c895d69fe2ed728197#">person-x</a>)</p>
 		</div>
-        <button type="button" id="go-button">Go</button>
+		<button type="button" id="go-button">Go</button>
+		<button type="button" id="copy-button">Copy</button>
 		<script type="module">
 			// some dependencies and utilities
 			import * as mat4 from '../libs/gl-matrix/mat4.js';
@@ -58,7 +59,7 @@
 
             // Clipboard
             let meshToCopy = null;
-            let isSelecting = false;
+            //let isSelecting = false;
 
 			// temporary working variables
 			const workingMatrix = mat4.create();
@@ -124,6 +125,7 @@
 			);
 
 			const goButton = document.getElementById('go-button');
+			const copyButton = document.getElementById('copy-button');
 
 			const initXR = () => {
 				if (navigator.xr) {
@@ -213,10 +215,10 @@
 				goButton.innerText = 'Go';
 			};
 
-			const onSelect = event => {
-				isSelecting = true;
-                window.alert('onSelect');
-			};
+			// const onSelect = event => {
+			// 	isSelecting = true;
+            //     window.alert('onSelect');
+			// };
 
 			// Called once per frame, before render, to give the app a chance to update this.scene
 			const updateScene = frame => {
@@ -390,9 +392,12 @@
 				});
 			};
 
-            // Copy Mesh to Clipboard
+			// Copy Mesh to Clipboard
+			copybutton.addEventListener('click', copyModel, true)
             //window.addEventListener('mouseup', e => {_convertToObjAndCopy();});
-
+			const copyModel = () => {
+		    _exportToObj();
+		}
 /*
             window.addEventListener('mouseup', e => {
                 let floatingDiv = document.getElementById('floatingDiv');
@@ -400,7 +405,7 @@
                 floatingDiv.innerHTML = 'mouseup';
             });
 */
-            const _convertToObjAndCopy = async meshToCopy => {
+            const _convertToObjAndCopy = () => {
 
                 let result = null;
 
@@ -421,7 +426,7 @@
                 floatingDiv.style.display = 'block';
                 floatingDiv.innerHTML = result.split('\n').join('<br />');
 
-                window.alert('Mesh copied in Clipboard!');
+                window.alert('Mesh copied to Clipboard!');
             }
 
    
@@ -432,7 +437,7 @@
             * @param  {String} string         The string to be copied to clipboard
             * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
             */
-            const _copyToClipboard = async string => {
+            const _copyToClipboard = string => {
                 let textarea;
                 let result;
 
@@ -481,12 +486,12 @@
 					return;
 				}
 
-                if (isSelecting && meshToCopy) {
+                // if (isSelecting && meshToCopy) {
 
-                    _convertToObjAndCopy(meshToCopy);
+                //     _convertToObjAndCopy(meshToCopy);
 
-					isSelecting = false;
-				}
+				// 	isSelecting = false;
+				// }
 
 				engine.startFrame();
 				for (const view of pose.views) {
@@ -498,6 +503,9 @@
 					engine.render();
 				}
 				engine.endFrame();
+
+				goButton.style.display = 'block';
+				copyButton.style.display = 'block';				
 			};
 
 			initXR();
