@@ -38,7 +38,7 @@
 		<div id="description">
 			<h2>ARKit face tracking Example</h2>
 			<p>This detects and tracks your face using ARKit and places a 3D  model on it.
-                Touch screen to copy mesh to clipboard.
+               Press Copy button to copy mesh to clipboard.
 			(Glasses model by <a href="https://sketchfab.com/models/5c78f100eea749c895d69fe2ed728197#">person-x</a>)</p>
 		</div>
 		<button type="button" id="go-button">Go</button>
@@ -215,10 +215,6 @@
 				goButton.innerText = 'Go';
 			};
 
-			// const onSelect = event => {
-			// 	isSelecting = true;
-            //     window.alert('onSelect');
-			// };
 
 			// Called once per frame, before render, to give the app a chance to update this.scene
 			const updateScene = frame => {
@@ -393,83 +389,77 @@
 			};
 
 			// Copy Mesh to Clipboard
-			copyButton.addEventListener('click', copyModel, true)
-            //window.addEventListener('mouseup', e => {_convertToObjAndCopy();});
-			const copyModel = () => {
+			copyButton.addEventListener('click', onCopyButtonClick);
+
+			const onCopyButtonClick = event => {
 				_convertToObjAndCopy();
-		}
-/*
-            window.addEventListener('mouseup', e => {
-                let floatingDiv = document.getElementById('floatingDiv');
-                floatingDiv.style.display = 'block';
-                floatingDiv.innerHTML = 'mouseup';
-            });
-*/
-            const _convertToObjAndCopy = () => {
+			}
 
-                let result = null;
+			const _convertToObjAndCopy = () => {
 
-                if (!meshToCopy) {
-                    result = 'NO MESH';
-                } else {
-                    const exporter = new THREE.OBJExporter();
-                    if(!exporter) window.alert('exporter is NULL');
-                    
-                    result = exporter.parse(meshToCopy);
+				let result = null;
+
+				if (!meshToCopy) {
+					result = 'NO MESH';
+				} else {
+					const exporter = new THREE.OBJExporter();
+					if (!exporter) window.alert('exporter is NULL');
+
+					result = exporter.parse(meshToCopy);
 
 
-                }
+				}
 
-                _copyToClipboard(result);
+				_copyToClipboard(result);
 
-                let floatingDiv = document.getElementById('floatingDiv');
-                floatingDiv.style.display = 'block';
-                floatingDiv.innerHTML = result.split('\n').join('<br />');
+				let floatingDiv = document.getElementById('floatingDiv');
+				floatingDiv.style.display = 'block';
+				floatingDiv.innerHTML = result.split('\n').join('<br />');
 
-                window.alert('Mesh copied to Clipboard!');
-            }
+				window.alert('Mesh copied to Clipboard!');
+			}
 
-   
 
-            //  https://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios
-            /**
-            * Copy a string to clipboard
-            * @param  {String} string         The string to be copied to clipboard
-            * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
-            */
-            const _copyToClipboard = string => {
-                let textarea;
-                let result;
 
-                try {
-                    textarea = document.createElement('textarea');
-                    textarea.setAttribute('readonly', true);
-                    textarea.setAttribute('contenteditable', true);
-                    textarea.style.position = 'fixed'; // prevent scroll from jumping to the bottom when focus is set.
-                    textarea.value = string;
+			//  https://stackoverflow.com/questions/34045777/copy-to-clipboard-using-javascript-in-ios
+			/**
+			* Copy a string to clipboard
+			* @param  {String} string         The string to be copied to clipboard
+			* @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
+			*/
+			const _copyToClipboard = string => {
+				let textarea;
+				let result;
 
-                    document.body.appendChild(textarea);
+				try {
+					textarea = document.createElement('textarea');
+					textarea.setAttribute('readonly', true);
+					textarea.setAttribute('contenteditable', true);
+					textarea.style.position = 'fixed'; // prevent scroll from jumping to the bottom when focus is set.
+					textarea.value = string;
 
-                    //textarea.focus(); // 'fixed' above does not seem to work as expected, hence removing 'focus'
-                    textarea.select();
+					document.body.appendChild(textarea);
 
-                    const range = document.createRange();
-                    range.selectNodeContents(textarea);
+					//textarea.focus(); // 'fixed' above does not seem to work as expected, hence removing 'focus'
+					textarea.select();
 
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(range);
+					const range = document.createRange();
+					range.selectNodeContents(textarea);
 
-                    textarea.setSelectionRange(0, textarea.value.length);
-                    result = document.execCommand('copy');
-                } catch (err) {
-                    console.error(err);
-                    result = null;
-                    window.alert('_copyToClipboard FAILED');
-                } finally {
-                    document.body.removeChild(textarea);
-                }
-            }
+					const sel = window.getSelection();
+					sel.removeAllRanges();
+					sel.addRange(range);
+
+					textarea.setSelectionRange(0, textarea.value.length);
+					result = document.execCommand('copy');
+				} catch (err) {
+					console.error(err);
+					result = null;
+					window.alert('_copyToClipboard FAILED');
+				} finally {
+					document.body.removeChild(textarea);
+				}
+			}
 
 
 			////////////////
@@ -485,13 +475,6 @@
 					console.log('No pose');
 					return;
 				}
-
-                // if (isSelecting && meshToCopy) {
-
-                //     _convertToObjAndCopy(meshToCopy);
-
-				// 	isSelecting = false;
-				// }
 
 				engine.startFrame();
 				for (const view of pose.views) {
