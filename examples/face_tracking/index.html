@@ -59,7 +59,6 @@
 
             // Clipboard
             let meshToCopy = null;
-            //let isSelecting = false;
 
 			// temporary working variables
 			const workingMatrix = mat4.create();
@@ -159,7 +158,6 @@
 			const initSession = async xrSession => {
 				session = xrSession;
 				session.addEventListener('end', onSessionEnd);
-                session.addEventListener('select', onSelect);
 
 				localReferenceSpace = await session.requestReferenceSpace('local');
 				viewerReferenceSpace = await session.requestReferenceSpace('viewer');
