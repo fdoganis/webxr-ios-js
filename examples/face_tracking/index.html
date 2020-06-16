@@ -59,7 +59,7 @@
 			const meshMap = new Map();
 
             // Clipboard
-            let meshToCopy = null;
+            var meshToCopy = null;
 
 			// temporary working variables
 			const workingMatrix = mat4.create();
@@ -389,20 +389,21 @@
 
 			
 			// Copy Mesh to Clipboard
-			copyButton.addEventListener('click', onCopyButtonClick);
+			//copyButton.addEventListener('click', onCopyButtonClick);
+			document.getElementById('copy-button').addEventListener('click', onCopyButtonClick, true);
 
-			const onCopyButtonClick = event => {
+			function onCopyButtonClick() {
 				_convertToObjAndCopy();
 			}
 
-			const _convertToObjAndCopy = () => {
+			function _convertToObjAndCopy() {
 
 				let result = null;
 
 				if (!meshToCopy) {
 					result = 'NO MESH';
 				} else {
-					const exporter = new THREE.OBJExporter();
+					var exporter = new THREE.OBJExporter();
 					if (!exporter) window.alert('exporter is NULL');
 
 					result = exporter.parse(meshToCopy);
@@ -430,7 +431,7 @@
 			*/
 
 			
-			const _copyToClipboard = string => {
+			function _copyToClipboard(string) {
 				let textarea;
 				let result;
 
